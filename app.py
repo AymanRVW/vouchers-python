@@ -12,7 +12,7 @@ IMAGE_PATH = os.path.join(os.path.dirname(__file__), "Untitled_Artwork.png")
 
 st.set_page_config(page_title="VoucherPOC", page_icon="🧾", layout="centered")
 
-st.title("Online Voucher Redemption")
+st.title("Online Voucher Redemption!")
 st.caption("Quick Streamlit UI scaffold")
 st.logo(IMAGE_PATH)
 # st.image(IMAGE_PATH, width=120)
