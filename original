@@ -1,0 +1,56 @@
+# source .venv/bin/activate
+# streamlit run app.py
+# pip install -r requirements.txt
+
+import streamlit as st
+import requests
+
+st.set_page_config(page_title="VoucherPOC", page_icon="🧾", layout="centered")
+
+st.title("Voucher POC")
+st.caption("Quick Streamlit UI scaffold")
+
+st.write("Hello! App running in a virtual environment.")
+
+st.subheader("Redeem Voucher")
+
+voucher_code = st.text_input("Voucher Code", placeholder="Enter voucher code")
+if st.button("Check Voucher"):
+    with st.spinner("Checking voucher..."):
+        try:
+            print(f"Checking voucher: {voucher_code}")
+            response = requests.get(
+                f"https://bipedal-whistlingly-kaycee.ngrok-free.dev/api/ext/voucher-lookup?voucher_code={voucher_code}",
+                timeout=15,
+            )
+            response.raise_for_status()
+            data = response.json() if response.content else {}
+            st.write(f"Voucher Status: {data['status']}")
+            if data:
+                st.json(data)
+        except requests.exceptions.HTTPError:
+            st.error(
+                f"Check voucher failed with status {response.status_code}: {response.text}"
+            )
+        except requests.exceptions.RequestException as exc:
+            st.error(f"Network error: {exc}")
+
+
+if st.button("Redeem"):
+    with st.spinner("Redeeming voucher..."):
+        try:
+            response = requests.post(
+                "https://bipedal-whistlingly-kaycee.ngrok-free.dev/api/ext/redeem-voucher/redeem",
+                timeout=15,
+            )
+            response.raise_for_status()
+            data = response.json() if response.content else {}
+            st.success("Voucher redeemed successfully.")
+            if data:
+                st.json(data)
+        except requests.exceptions.HTTPError:
+            st.error(
+                f"Redeem failed with status {response.status_code}: {response.text}"
+            )
+        except requests.exceptions.RequestException as exc:
+            st.error(f"Network error: {exc}")
